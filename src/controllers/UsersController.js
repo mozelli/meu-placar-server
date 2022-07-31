@@ -21,7 +21,6 @@ module.exports = {
           .json({ message: "Invalid email or password." });
 
       user.password = undefined;
-      // user.emailValidationToken = undefined;
 
       return response.json(user);
     } catch (error) {
