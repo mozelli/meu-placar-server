@@ -1,5 +1,6 @@
 const Users = require("../models/Users");
 const bcrypt = require("bcryptjs");
+const auth = require("../modules/auth");
 
 module.exports = {
   /**
@@ -21,10 +22,13 @@ module.exports = {
           .json({ message: "Invalid email or password." });
 
       user.password = undefined;
+      // const userId = user.id;
 
-      return response.json(user);
+      const token = auth.generateJWT(user.id);
+
+      return response.json({ user, token });
     } catch (error) {
-      return response.satus(500).json(error.message);
+      return response.status(500).json(error.message);
     }
   },
 
