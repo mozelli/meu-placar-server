@@ -12,6 +12,10 @@ routes.post("/add-new-user", (request, response) => {
   Users.AddNewUser(request, response);
 });
 
+routes.get("/email-validation/:token", (request, response) => {
+  Users.EmailValidation(request, response);
+});
+
 // routes.use(authentication);
 // routes.get("/protected", (request, response) => {
 //   return response.json({ message: "Authorized.", user: request.userId });

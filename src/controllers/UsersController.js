@@ -1,6 +1,8 @@
 const Users = require("../models/Users");
 const bcrypt = require("bcryptjs");
+const crypto = require("crypto");
 const auth = require("../modules/auth");
+const mailer = require("../modules/mailer");
 
 module.exports = {
   /**
@@ -47,7 +49,8 @@ module.exports = {
         return response.status(400).json({ message: "Email already exists." });
 
       const passwordEncripted = await bcrypt.hash(password, 10);
-      const emailValidationToken = await bcrypt.hash(email, 10);
+      // const emailValidationToken = await bcrypt.hash(email, 10);
+      const emailValidationToken = crypto.randomBytes(20).toString("hex");
       const birthdayTimestamp = new Date(`${year}-${month}-${day}`);
 
       const user = await Users.create({
@@ -60,12 +63,46 @@ module.exports = {
         emailValidationToken,
       });
 
+      const text = `Olá ${name} ${lastname}! Estamos felizes por você querer fazer parte do Meu Placar. Para concluir seu cadastro, copie e cole o seguinte link no seu navegador: http://localhost:4000/users/email-validation/${emailValidationToken}`;
+
+      const html = `<h4>Conformação</h4><p><a href='http://localhost:4000/users/email-validation/${emailValidationToken}'>Clique aqui!</a>`;
+
+      await mailer.send(
+        "Meu Placar <no-reply@meuplacar.com",
+        email,
+        "Confirmação de email",
+        text,
+        html
+      );
+
       user.password = undefined;
       user.emailValidationToken = undefined;
 
       return response.status(201).json(user);
     } catch (error) {
       console.log(error.message);
+      return response.status(500).json(error.message);
+    }
+  },
+
+  async EmailValidation(request, response) {
+    const emailValidationToken = request.params.token;
+
+    try {
+      const user = await Users.findOne({ emailValidationToken });
+      if (!user)
+        return response
+          .status(400)
+          .json({ message: "Invalid token or expired." });
+
+      await Users.findByIdAndUpdate(user.id, {
+        $set: {
+          state: "email validated.",
+        },
+      });
+
+      return response.json({ message: "Email successfully validated!" });
+    } catch (error) {
       return response.status(500).json(error.message);
     }
   },
