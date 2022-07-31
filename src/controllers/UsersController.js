@@ -1,3 +1,6 @@
+const Users = require("../models/Users");
+const bcrypt = require("bcryptjs");
+
 module.exports = {
   /**
    * Login Function
@@ -17,20 +20,35 @@ module.exports = {
    * @Params request.body {name, lastname, email, password, birthday: {day, month, year}, permition}
    * @Return boolean
    */
-  AddNewUser(request, response) {
+  async AddNewUser(request, response) {
     const { name, lastname, email, password, birthday, permition } =
       request.body;
     const { day, month, year } = birthday;
 
-    const birthdayTimestamp = new Date(`${year}-${month}-${day}`);
+    try {
+      if (await Users.findOne({ email }))
+        return response.status(400).json({ message: "Email already exists." });
 
-    return response.json({
-      name,
-      lastname,
-      email,
-      password,
-      birthday: birthdayTimestamp,
-      permition,
-    });
+      const passwordEncripted = await bcrypt.hash(password, 10);
+      const emailValidationToken = await bcrypt.hash(email, 10);
+      const birthdayTimestamp = new Date(`${year}-${month}-${day}`);
+
+      const user = await Users.create({
+        name,
+        lastname,
+        email,
+        password: passwordEncripted,
+        birthday: birthdayTimestamp,
+        permition,
+        emailValidationToken,
+      });
+
+      user.password = undefined;
+
+      return response.status(201).json(user);
+    } catch (error) {
+      console.log(error.message);
+      return response.status(500).json(error.message);
+    }
   },
 };
