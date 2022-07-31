@@ -7,12 +7,26 @@ module.exports = {
    * @Params request, response
    * @Return User Object {id, name, lastname, birthday, email, token}
    */
-  Login(request, response) {
+  async SignIn(request, response) {
     const { email, password } = request.body;
-    return response.json({
-      email,
-      password,
-    });
+    try {
+      const user = await Users.findOne({ email }).select("+password");
+
+      if (!user)
+        return response.status(400).json({ message: "User not founded." });
+
+      if (!(await bcrypt.compare(password, user.password)))
+        return response
+          .status(401)
+          .json({ message: "Invalid email or password." });
+
+      user.password = undefined;
+      // user.emailValidationToken = undefined;
+
+      return response.json(user);
+    } catch (error) {
+      return response.satus(500).json(error.message);
+    }
   },
 
   /**
@@ -44,6 +58,7 @@ module.exports = {
       });
 
       user.password = undefined;
+      user.emailValidationToken = undefined;
 
       return response.status(201).json(user);
     } catch (error) {
