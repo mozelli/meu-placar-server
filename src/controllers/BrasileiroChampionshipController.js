@@ -150,4 +150,45 @@ module.exports = {
       return response.status(500).json(error.message);
     }
   },
+
+  async getMatches(request, response) {
+    const serie = request.params.championship;
+    let Matches;
+
+    if (serie === "A") {
+      Matches = MatchesSerieA;
+    } else {
+      Matches = MatchesSerieB;
+    }
+
+    try {
+      const matches = await Matches.find().sort("date");
+      let result = [];
+
+      matches.map((match) => {
+        let catchDate = new Date(match.date);
+        result.push({
+          team: match.teams,
+          date: {
+            day: catchDate.getDate(),
+            month: catchDate.getMonth() + 1,
+            hours: catchDate.getHours(),
+            minutes: catchDate.getMinutes(),
+          },
+          stadium: match.stadium,
+        });
+      });
+
+      responseLog("success", 200, `Collection MatchesSerie${serie} founded.`);
+      return response.json(result);
+    } catch (error) {
+      responseLog(
+        "error",
+        500,
+        error.message,
+        "BrasileiroChampionshipController.js, getMatches(), Matches.find()"
+      );
+      return response.status(500).json(error.message);
+    }
+  },
 };
