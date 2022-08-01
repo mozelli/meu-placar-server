@@ -216,11 +216,11 @@ module.exports = {
         match_id,
         bet: {
           team_a: {
-            team_id: userBet.team_a.team_id,
+            name: userBet.team_a.name,
             result: userBet.team_a.result,
           },
           team_b: {
-            team_id: userBet.team_b.team_id,
+            name: userBet.team_b.name,
             result: userBet.team_b.result,
           },
           cash: userBet.cash,
@@ -239,4 +239,6 @@ module.exports = {
       return response.status(500).json(error.message);
     }
   },
+
+  async getBets(request, response) {},
 };
