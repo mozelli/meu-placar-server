@@ -1,8 +1,13 @@
 const routes = require("express").Router();
+const {
+  scrapTable,
+} = require("../controllers/BrasileiroChampionshipController");
+const { requestLog } = require("../utils/logRegister");
 // import { getTable, scrapTable, getMatches, scrapMatches } from '../controllers/brasileiroChampionshipController';
 
-routes.get("/", (request, response) => {
-  return response.json({ message: "Ok!" });
+routes.get("/scrap-table/:championship", (request, response) => {
+  requestLog("GET", "scrap-table");
+  scrapTable(request, response);
 });
 
 // router.get("/table/:championship", (request:Request, response:Response) => {
