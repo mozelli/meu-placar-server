@@ -90,6 +90,9 @@ module.exports = {
                   201,
                   `New collection MatchesSerie${serie} successfully created.`
                 );
+                return response.status(201).json({
+                  message: `Parabéns! A coleção MatchesSerie${serie} foi atualizada com sucesso.`,
+                });
               })
               .catch((error) => {
                 responseLog(
@@ -120,5 +123,31 @@ module.exports = {
         );
         return response.status(500).json(error.message);
       });
+  },
+
+  async getTable(request, response) {
+    let Table;
+    const serie = request.params.championship;
+
+    if (serie === "A") {
+      Table = TableSerieA;
+    } else {
+      Table = TableSerieB;
+    }
+
+    try {
+      const table = await Table.find().sort("position");
+
+      responseLog("success", 200, `TableSerie${serie} encontrada com sucesso.`);
+      return response.json(table);
+    } catch (error) {
+      responseLog(
+        "error",
+        500,
+        error.message,
+        "BrasileiroChampionshipController.js, getTable(), Table.find()"
+      );
+      return response.status(500).json(error.message);
+    }
   },
 };
