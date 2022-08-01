@@ -2,6 +2,8 @@ const TableSerieA = require("../models/TableSerieA");
 const TableSerieB = require("../models/TableSerieB");
 const MatchesSerieA = require("../models/MatchesSerieA");
 const MatchesSerieB = require("../models/MatchesSerieB");
+const BrasileiroSerieABets = require("../models/BrasileiroSerieABets");
+const BrasileiroSerieBBets = require("../models/BrasileiroSerieBBets");
 const { leaderboard, matches } = require("../modules/webscraping");
 const { responseLog, successLog } = require("../utils/logRegister");
 
@@ -168,6 +170,7 @@ module.exports = {
       matches.map((match) => {
         let catchDate = new Date(match.date);
         result.push({
+          id: match.id,
           team: match.teams,
           date: {
             day: catchDate.getDate(),
@@ -187,6 +190,51 @@ module.exports = {
         500,
         error.message,
         "BrasileiroChampionshipController.js, getMatches(), Matches.find()"
+      );
+      return response.status(500).json(error.message);
+    }
+  },
+
+  async createBet(request, response) {
+    const serie = request.body.serie;
+    const user_id = request.body.user_id;
+    const match_id = request.body.match_id;
+    const userBet = request.body.bet;
+
+    let Bets;
+
+    if (serie === "A") {
+      Bets = BrasileiroSerieABets;
+    } else {
+      Bets = BrasileiroSerieBBets;
+    }
+
+    try {
+      const bet = await Bets.create({
+        date: new Date(),
+        user_id,
+        match_id,
+        bet: {
+          team_a: {
+            team_id: userBet.team_a.team_id,
+            result: userBet.team_a.result,
+          },
+          team_b: {
+            team_id: userBet.team_b.team_id,
+            result: userBet.team_b.result,
+          },
+          cash: userBet.cash,
+        },
+      });
+
+      responseLog("success", 201, `Bet successfully registered.`);
+      return response.status(201).json(bet);
+    } catch (error) {
+      responseLog(
+        "error",
+        500,
+        error.message,
+        `BrasileiroChampionshipController.js, createBet(), Bets.create()`
       );
       return response.status(500).json(error.message);
     }
