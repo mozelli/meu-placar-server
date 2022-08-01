@@ -3,6 +3,7 @@ const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
 const auth = require("../modules/auth");
 const mailer = require("../modules/mailer");
+const { responseLog } = require("../utils/logRegister");
 
 module.exports = {
   /**
@@ -15,21 +16,42 @@ module.exports = {
     try {
       const user = await Users.findOne({ email }).select("+password");
 
-      if (!user)
+      if (!user) {
+        responseLog(
+          "error",
+          400,
+          "User not founded by email.",
+          "UserController.js, SignIn(), Users.findOne()"
+        );
         return response.status(400).json({ message: "User not founded." });
+      }
 
-      if (!(await bcrypt.compare(password, user.password)))
+      if (!(await bcrypt.compare(password, user.password))) {
+        responseLog(
+          "error",
+          400,
+          "Password doesn't match.",
+          "UserController.js, SignIn(), bcrypt.compare()"
+        );
         return response
           .status(401)
           .json({ message: "Invalid email or password." });
+      }
 
       user.password = undefined;
       // const userId = user.id;
 
       const token = auth.generateJWT(user.id);
 
+      responseLog(
+        "success",
+        201,
+        "User logged.",
+        "UserController.js, SignIn()"
+      );
       return response.json({ user, token });
     } catch (error) {
+      responseLog("error", 500, error.message, "UserController.js, SignIn()");
       return response.status(500).json(error.message);
     }
   },
@@ -45,8 +67,15 @@ module.exports = {
     const { day, month, year } = birthday;
 
     try {
-      if (await Users.findOne({ email }))
+      if (await Users.findOne({ email })) {
+        responseLog(
+          "error",
+          400,
+          "User not founded by email.",
+          "UserController.js, AddNewUser(), Users.findOne()"
+        );
         return response.status(400).json({ message: "Email already exists." });
+      }
 
       const passwordEncripted = await bcrypt.hash(password, 10);
       // const emailValidationToken = await bcrypt.hash(email, 10);
@@ -78,9 +107,21 @@ module.exports = {
       user.password = undefined;
       user.emailValidationToken = undefined;
 
+      responseLog(
+        "success",
+        201,
+        "New user created.",
+        "UserController.js, AddNewUser()"
+      );
+
       return response.status(201).json(user);
     } catch (error) {
-      console.log(error.message);
+      responseLog(
+        "error",
+        500,
+        error.message,
+        "UserController.js, AddNewUser()"
+      );
       return response.status(500).json(error.message);
     }
   },
@@ -90,10 +131,17 @@ module.exports = {
 
     try {
       const user = await Users.findOne({ emailValidationToken });
-      if (!user)
+      if (!user) {
+        responseLog(
+          "error",
+          400,
+          "Email validation token doesn't match.",
+          "UserController.js, EmailValidation(), Users.findOne()"
+        );
         return response
           .status(400)
           .json({ message: "Invalid token or expired." });
+      }
 
       await Users.findByIdAndUpdate(user.id, {
         $set: {
@@ -101,8 +149,21 @@ module.exports = {
         },
       });
 
-      return response.json({ message: "Email successfully validated!" });
+      responseLog(
+        "success",
+        200,
+        "Email successfully verified.",
+        "UserController.js, EmailValidation()"
+      );
+
+      return response.json({ message: "Email successfully verified!" });
     } catch (error) {
+      responseLog(
+        "error",
+        500,
+        error.message,
+        "UserController.js, EmailValidation()"
+      );
       return response.status(500).json(error.message);
     }
   },
