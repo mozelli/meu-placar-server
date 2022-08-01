@@ -4,6 +4,7 @@ const {
   scrapMatches,
   getTable,
   getMatches,
+  createBet,
 } = require("../controllers/BrasileiroChampionshipController");
 const { requestLog } = require("../utils/logRegister");
 
@@ -25,6 +26,11 @@ routes.get("/scrap-matches/:championship", (request, response) => {
 routes.get("/matches/:championship", (request, response) => {
   requestLog("GET", "brasileiro-championship/matches");
   getMatches(request, response);
+});
+
+routes.post("/bets", (request, response) => {
+  requestLog("GET", "bets");
+  createBet(request, response);
 });
 
 module.exports = { routes };
