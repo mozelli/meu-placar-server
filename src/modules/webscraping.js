@@ -99,8 +99,6 @@ module.exports = {
         let teams = $("span.teams", li).text();
         // let result = $("span .date", li).text()
 
-        console.log("Sanitizing data...");
-
         date = date.replace("•", "");
         const dateSanitized = date.split("\n");
         const dateWithoutBlankLine = dateSanitized.filter((line) => {
