@@ -16,7 +16,7 @@ routes.get("/scrap-table/:championship", (request, response) => {
 //   getTable(request, response)
 // });
 
-router.get("/matches/:championship", (request, response) => {
+routes.get("/matches/:championship", (request, response) => {
   requestLog("GET", "matches");
   scrapMatches(request, response);
 });
