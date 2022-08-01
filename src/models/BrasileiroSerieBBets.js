@@ -14,7 +14,7 @@ const BrasileiroSerieBBetsSchema = new mongoose.Schema({
     required: true,
   },
   bet: {
-    teamA: {
+    team_a: {
       team_id: {
         type: String,
         requires: true,
@@ -24,7 +24,7 @@ const BrasileiroSerieBBetsSchema = new mongoose.Schema({
         required: true,
       },
     },
-    teamB: {
+    team_b: {
       team_id: {
         type: String,
         requires: true,
