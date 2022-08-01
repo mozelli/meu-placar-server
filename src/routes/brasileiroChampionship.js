@@ -1,6 +1,7 @@
 const routes = require("express").Router();
 const {
   scrapTable,
+  scrapMatches,
 } = require("../controllers/BrasileiroChampionshipController");
 const { requestLog } = require("../utils/logRegister");
 // import { getTable, scrapTable, getMatches, scrapMatches } from '../controllers/brasileiroChampionshipController';
@@ -15,17 +16,9 @@ routes.get("/scrap-table/:championship", (request, response) => {
 //   getTable(request, response)
 // });
 
-// router.put("/scrap-table/:championship", (request:Request, response:Response) => {
-//   scrapTable(request, response);
-// })
-
-// router.get("/matches/:championship", (request:Request, response:Response) => {
-//   console.log(`[Request: /marches/${request.params.championship}]`);
-//   getMatches(request, response)
-// });
-
-// router.put("/scrap-matches/:championship", (request:Request, response:Response) => {
-//   scrapMatches(request, response)
-// });
+router.get("/matches/:championship", (request, response) => {
+  requestLog("GET", "matches");
+  scrapMatches(request, response);
+});
 
 module.exports = { routes };
