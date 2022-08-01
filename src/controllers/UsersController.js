@@ -2,7 +2,7 @@ const Users = require("../models/Users");
 const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
 const auth = require("../modules/auth");
-const mailer = require("../modules/mailer");
+const mailer = require("../modules/mailer/mailer");
 const { responseLog } = require("../utils/logRegister");
 
 module.exports = {
@@ -71,7 +71,7 @@ module.exports = {
         responseLog(
           "error",
           400,
-          "User not founded by email.",
+          "Email already exists.",
           "UserController.js, AddNewUser(), Users.findOne()"
         );
         return response.status(400).json({ message: "Email already exists." });
