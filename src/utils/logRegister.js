@@ -6,7 +6,7 @@ module.exports = {
     console.log(`[${new Date()}]\n`);
   },
 
-  responseLog(status, code, message, where) {
+  responseLog(status, code, message, where = "Ok!") {
     if (status === "error") {
       console.error(`[${code} RESPONSE] - ${message}`);
       console.error(`[${new Date()}] - ${where}\n`);
@@ -25,6 +25,6 @@ module.exports = {
 
   successLog(message) {
     console.error(`[SUCCESS] - ${message}`);
-    console.error(`[${new Date()}] - ${where}\n`);
+    console.error(`[${new Date()}]\n`);
   },
 };
