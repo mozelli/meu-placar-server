@@ -57,93 +57,101 @@ module.exports = {
     }
   },
 
-  // export async function matches(request: Request) {
-  //   const championship = request.params.championship;
-  //   console.log("matches");
-  //   let url: string;
-  //   let scrapClass: string;
-  //   let matches = [{}];
+  async matches(request) {
+    const championship = request.params.championship;
+    console.log("Get parameter...");
 
-  //   switch(championship) {
-  //     case "A":
-  //       url = "https://www.gazetaesportiva.com/campeonatos/brasileiro-serie-a/";
-  //       scrapClass = ".rodadas_grupo_A_numero_rodada_"
-  //       break;
-  //     case "B":
-  //       url = "https://www.gazetaesportiva.com/campeonatos/brasileiro-serie-b/";
-  //       scrapClass = ".rodadas_grupo_A_numero_rodada_"
-  //       break;
-  //     default:
-  //       throw("No Serie founded.");
-  //   }
+    let url = "";
+    let scrapClass = "";
+    let matches = [{}];
 
-  //   try {
-  //     const html = await axios(url);
-  //     const $ = Cheerio.load(html.data);
+    switch (championship) {
+      case "A":
+        url = "https://www.gazetaesportiva.com/campeonatos/brasileiro-serie-a/";
+        scrapClass = ".rodadas_grupo_A_numero_rodada_";
+        break;
+      case "B":
+        url = "https://www.gazetaesportiva.com/campeonatos/brasileiro-serie-b/";
+        scrapClass = ".rodadas_grupo_A_numero_rodada_";
+        break;
+      default:
+        throw "No Serie founded.";
+    }
 
-  //     console.log("Scrapping: current round...");
-  //     let nav = $("div .mostrarRodada", html.data).html();
-  //     let currentRound = $("span.nav__games__current", nav).text();
-  //     currentRound = `${currentRound[0]}${currentRound[1]}`;
+    try {
+      const html = await axios(url);
+      const $ = cheerio.load(html.data);
 
-  //     console.log("Scrapping: table...");
-  //     let table = $(`div ${scrapClass}${currentRound}`, html.data).html();
-  //     let ul = $("ul", table).html();
+      console.log("Scrapping current round...");
 
-  //     $("li", ul).each(function() {
-  //       let li = $(this).html()
-  //       let date = $("span.date", li).text()
-  //       let teams = $("span.teams", li).text()
-  //       // let result = $("span .date", li).text()
+      let nav = $("div .mostrarRodada", html.data).html();
+      let currentRound = $("span.nav__games__current", nav).text();
+      currentRound = `${currentRound[0]}${currentRound[1]}`;
 
-  //       date = date.replace("•", "");
-  //       const dateSanitized = date.split('\n');
-  //       const dateWithoutBlankLine = dateSanitized.filter((line) => {
-  //         if(line.trim().length === 0) {
-  //           return false
-  //         }
-  //         return true
-  //       })
+      console.log("Scrapping data table...");
 
-  //       const stadium = dateWithoutBlankLine[1];
+      let table = $(`div ${scrapClass}${currentRound}`, html.data).html();
+      let ul = $("ul", table).html();
 
-  //       const breakDate = dateWithoutBlankLine[0].split(" ");
-  //       const data = breakDate[2].split("/");
-  //       const day = data[0];
-  //       (day < 10 ? `0${day}` : day);
-  //       const month = data[1];
-  //       (month < 10 ? `0${month}` : month);
+      $("li", ul).each(function () {
+        let li = $(this).html();
+        let date = $("span.date", li).text();
+        let teams = $("span.teams", li).text();
+        // let result = $("span .date", li).text()
 
-  //       const breakHour = breakDate[3].split(":");
-  //       const hour = breakHour[0];
-  //       (hour < 10 ? `0${hour}` : hour);
-  //       const minutes = breakHour[1];
-  //       (minutes < 10 ? `0${minutes}` : minutes);
+        console.log("Sanitizing data...");
 
-  //       // console.log(`2022-${month}-${day}T${hour}:${minutes}:00-0300`);
-  //       const time = `2022-${month}-${day}T${hour}:${minutes}:00-00:00`;
+        date = date.replace("•", "");
+        const dateSanitized = date.split("\n");
+        const dateWithoutBlankLine = dateSanitized.filter((line) => {
+          if (line.trim().length === 0) {
+            return false;
+          }
+          return true;
+        });
 
-  //       const dateTimeStamp = new Date(time);
+        const stadium = dateWithoutBlankLine[1];
 
-  //       const teamsSanitized = teams.split('\n');
-  //       const teamsWithoutBlankLine = teamsSanitized.filter((line) => {
-  //         if(line.trim().length === 0) {
-  //           return false
-  //         }
-  //         return true
-  //       })
+        const breakDate = dateWithoutBlankLine[0].split(" ");
+        const data = breakDate[2].split("/");
+        const day = data[0];
+        day < 10 ? `0${day}` : day;
+        const month = data[1];
+        month < 10 ? `0${month}` : month;
 
-  //       matches.push({
-  //         date: dateTimeStamp,
-  //         teams: teamsWithoutBlankLine,
-  //         stadium
-  //       });
-  //     })
+        const breakHour = breakDate[3].split(":");
+        const hour = breakHour[0];
+        hour < 10 ? `0${hour}` : hour;
+        const minutes = breakHour[1];
+        minutes < 10 ? `0${minutes}` : minutes;
 
-  //     matches.shift();
-  //     return matches;
+        // console.log(`2022-${month}-${day}T${hour}:${minutes}:00-0300`);
+        const time = `2022-${month}-${day}T${hour}:${minutes}:00-00:00`;
 
-  //   } catch(error) {
-  //     return error.message;
-  //   }
+        const dateTimeStamp = new Date(time);
+
+        const teamsSanitized = teams.split("\n");
+        const teamsWithoutBlankLine = teamsSanitized.filter((line) => {
+          if (line.trim().length === 0) {
+            return false;
+          }
+          return true;
+        });
+
+        matches.push({
+          date: dateTimeStamp,
+          teams: teamsWithoutBlankLine,
+          stadium,
+        });
+      });
+
+      matches.shift();
+      successLog("Matches scrapping finalized.");
+
+      return matches;
+    } catch (error) {
+      errorLog(error.message, "webscraping.js, matches()");
+      return error.message;
+    }
+  },
 };
