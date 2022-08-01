@@ -2,7 +2,8 @@ const Users = require("../models/Users");
 const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
 const auth = require("../modules/auth");
-const mailer = require("../modules/mailer/mailer");
+const mailer = require("../modules/mailer");
+const { emailValidationView } = require("../modules/emailViewsGenerator");
 const { responseLog } = require("../utils/logRegister");
 
 module.exports = {
@@ -94,7 +95,8 @@ module.exports = {
 
       const text = `Olá ${name} ${lastname}! Estamos felizes por você querer fazer parte do Meu Placar. Para concluir seu cadastro, copie e cole o seguinte link no seu navegador: http://localhost:4000/users/email-validation/${emailValidationToken}`;
 
-      const html = `<h4>Conformação</h4><p><a href='http://localhost:4000/users/email-validation/${emailValidationToken}'>Clique aqui!</a>`;
+      const url = `http://localhost:4000/users/email-validation/${emailValidationToken}`;
+      const html = emailValidationView(name, url);
 
       await mailer.send(
         "Meu Placar <no-reply@meuplacar.com",
@@ -145,7 +147,7 @@ module.exports = {
 
       await Users.findByIdAndUpdate(user.id, {
         $set: {
-          state: "email validated.",
+          state: "email_validated.",
         },
       });
 
