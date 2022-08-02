@@ -175,7 +175,7 @@ module.exports = {
           date: {
             day: catchDate.getDate(),
             month: catchDate.getMonth() + 1,
-            hours: catchDate.getHours(),
+            hours: catchDate.getHours() + 3,
             minutes: catchDate.getMinutes(),
           },
           stadium: match.stadium,
@@ -239,6 +239,4 @@ module.exports = {
       return response.status(500).json(error.message);
     }
   },
-
-  async getBets(request, response) {},
 };
