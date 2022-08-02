@@ -5,6 +5,10 @@ const { requestLog } = require("../utils/logRegister");
 // CONTROLLERS
 const Users = require("../controllers/UsersController");
 
+routes.get("/authenticate", authentication, (request, response) => {
+  return response.json({ authorized: true });
+});
+
 routes.post("/sign-in", (request, response) => {
   requestLog("POST", "sign-in");
   Users.SignIn(request, response);
@@ -44,10 +48,5 @@ routes.put("/add-coins/:id", (request, response) => {
   requestLog("PUT", "users/update-coins/:id");
   Users.addCoins(request, response);
 });
-
-// routes.use(authentication);
-// routes.get("/protected", (request, response) => {
-//   return response.json({ message: "Authorized.", user: request.userId });
-// });
 
 module.exports = { routes };
