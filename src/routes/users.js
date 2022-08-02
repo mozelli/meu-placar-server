@@ -20,6 +20,11 @@ routes.get("/email-validation/:token", (request, response) => {
   Users.EmailValidation(request, response);
 });
 
+routes.get("/", (request, response) => {
+  requestLog("GET", "users/");
+  Users.getUsers(request, response);
+});
+
 // routes.use(authentication);
 // routes.get("/protected", (request, response) => {
 //   return response.json({ message: "Authorized.", user: request.userId });

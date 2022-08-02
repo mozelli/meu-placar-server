@@ -7,11 +7,6 @@ const { emailValidationView } = require("../modules/emailViewsGenerator");
 const { responseLog } = require("../utils/logRegister");
 
 module.exports = {
-  /**
-   * Login Function
-   * @Params request, response
-   * @Return User Object {id, name, lastname, birthday, email, token}
-   */
   async SignIn(request, response) {
     const { email, password } = request.body;
     try {
@@ -160,6 +155,22 @@ module.exports = {
         500,
         error.message,
         "UserController.js, EmailValidation()"
+      );
+      return response.status(500).json(error.message);
+    }
+  },
+
+  async getUsers(request, response) {
+    try {
+      const users = await Users.find();
+      responseLog("success", 200, "Users founded.");
+      return response.json(users);
+    } catch (error) {
+      responseLog(
+        "error",
+        500,
+        error.message,
+        "UserController.js, getUsers(), Users.find()"
       );
       return response.status(500).json(error.message);
     }
