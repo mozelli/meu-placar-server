@@ -30,6 +30,11 @@ routes.get("/:id", (request, response) => {
   Users.getUserById(request, response);
 });
 
+routes.delete("/:id", (request, response) => {
+  requestLog("DELETE", "users/:id");
+  Users.deleteUserById(request, response);
+});
+
 // routes.use(authentication);
 // routes.get("/protected", (request, response) => {
 //   return response.json({ message: "Authorized.", user: request.userId });

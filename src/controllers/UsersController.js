@@ -194,4 +194,23 @@ module.exports = {
       return response.status(500).json(error.message);
     }
   },
+
+  async deleteUserById(request, response) {
+    const id = request.params.id;
+
+    try {
+      const user = await Users.findByIdAndDelete({ _id: id });
+
+      responseLog("success", 201, "Users deleted.");
+      return response.json(user);
+    } catch (error) {
+      responseLog(
+        "error",
+        400,
+        error.message,
+        "UserController.js, deleteUserById(), Users.findOneAndDelete()"
+      );
+      return response.status(500).json(error.message);
+    }
+  },
 };
