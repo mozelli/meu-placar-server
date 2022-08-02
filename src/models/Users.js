@@ -34,6 +34,11 @@ const UsersSchema = new mongoose.Schema({
     type: String,
     require: true,
   },
+  coins: {
+    type: Number,
+    required: true,
+    default: 10,
+  },
   createdAt: {
     type: Date,
     default: Date.now,
