@@ -1,6 +1,6 @@
 const Teams = require("../models/Teams");
-const MatchesSerieA = require("../models/MatchesSerieA");
 const Bets = require("../models/BettingExchange");
+const Users = require("../models/Users");
 const { responseLog } = require("../utils/logRegister");
 
 module.exports = {
@@ -25,6 +25,14 @@ module.exports = {
           result,
           gamblers: [user_id],
         });
+
+        const user = await Users.findOne({ _id: user_id });
+        const coinsUpdated = user.coins - 2;
+        await Users.findByIdAndUpdate(
+          { _id: user_id },
+          { coins: coinsUpdated }
+        );
+
         responseLog("success", 201, "New bet created.");
         return response.status(201).json(newBet);
       }
@@ -68,29 +76,25 @@ module.exports = {
         error.message,
         "TeamsController.js, getTeamById(), Teams.findOne()"
       );
-      return response.json(error);
+      return response.json(error.message);
     }
   },
 
-  // async setShortName(request, response) {
-  //   const { team_id, short_name } = request.body;
+  async deleteBetById(request, response) {
+    const { id } = request.params;
 
-  //   try {
-  //     const team = await Teams.findByIdAndUpdate(team_id, {
-  //       $set: {
-  //         short_name,
-  //       },
-  //     });
-  //     responseLog("success", 201, "Short name included.");
-  //     return response.status(201).json(team);
-  //   } catch (error) {
-  //     responseLog(
-  //       "error",
-  //       400,
-  //       error.message,
-  //       "TeamsController.js, getTeamById(), Teams.findOne()"
-  //     );
-  //     return response.json(error);
-  //   }
-  // },
+    try {
+      const bet = await Bets.findByIdAndDelete({ _id: id });
+      responseLog("success", 200, "Bet deleted.");
+      return response.json(bet);
+    } catch (error) {
+      responseLog(
+        "error",
+        400,
+        error.message,
+        "BetsController.js, deleteBet(), Bets.findByIdAndDelete()"
+      );
+      return response.json(error.message);
+    }
+  },
 };

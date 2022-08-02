@@ -15,6 +15,11 @@ routes.get("/", (request, response) => {
   Bets.getBets(request, response);
 });
 
+routes.delete("/:id", (request, response) => {
+  requestLog("DELETE", "bets/:id");
+  Bets.deleteBetById(request, response);
+});
+
 // routes.use(authentication);
 // routes.get("/protected", (request, response) => {
 //   return response.json({ message: "Authorized.", user: request.userId });
