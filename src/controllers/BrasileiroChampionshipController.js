@@ -194,49 +194,4 @@ module.exports = {
       return response.status(500).json(error.message);
     }
   },
-
-  async createBet(request, response) {
-    const serie = request.body.serie;
-    const user_id = request.body.user_id;
-    const match_id = request.body.match_id;
-    const userBet = request.body.bet;
-
-    let Bets;
-
-    if (serie === "A") {
-      Bets = BrasileiroSerieABets;
-    } else {
-      Bets = BrasileiroSerieBBets;
-    }
-
-    try {
-      const bet = await Bets.create({
-        date: new Date(),
-        user_id,
-        match_id,
-        bet: {
-          team_a: {
-            name: userBet.team_a.name,
-            result: userBet.team_a.result,
-          },
-          team_b: {
-            name: userBet.team_b.name,
-            result: userBet.team_b.result,
-          },
-          cash: userBet.cash,
-        },
-      });
-
-      responseLog("success", 201, `Bet successfully registered.`);
-      return response.status(201).json(bet);
-    } catch (error) {
-      responseLog(
-        "error",
-        500,
-        error.message,
-        `BrasileiroChampionshipController.js, createBet(), Bets.create()`
-      );
-      return response.status(500).json(error.message);
-    }
-  },
 };
