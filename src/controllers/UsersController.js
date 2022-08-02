@@ -57,11 +57,6 @@ module.exports = {
     }
   },
 
-  /**
-   * Login Function
-   * @Params request.body {name, lastname, email, password, birthday: {day, month, year}, permition}
-   * @Return boolean
-   */
   async AddNewUser(request, response) {
     const { name, lastname, email, password, birthday, permition } =
       request.body;
