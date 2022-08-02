@@ -35,6 +35,11 @@ routes.delete("/:id", (request, response) => {
   Users.deleteUserById(request, response);
 });
 
+routes.put("/email-update/:id", (request, response) => {
+  requestLog("PUT", "users/email-update/:id");
+  Users.updateEmailById(request, response);
+});
+
 // routes.use(authentication);
 // routes.get("/protected", (request, response) => {
 //   return response.json({ message: "Authorized.", user: request.userId });

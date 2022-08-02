@@ -208,7 +208,27 @@ module.exports = {
         "error",
         400,
         error.message,
-        "UserController.js, deleteUserById(), Users.findOneAndDelete()"
+        "UserController.js, deleteUserById(), Users.findByIdAndDelete()"
+      );
+      return response.status(500).json(error.message);
+    }
+  },
+
+  async updateEmailById(request, response) {
+    const id = request.params.id;
+    const email = request.body.email;
+
+    try {
+      const user = await Users.findByIdAndUpdate({ _id: id }, { email });
+
+      responseLog("success", 201, "E-mail updated.");
+      return response.json(user);
+    } catch (error) {
+      responseLog(
+        "error",
+        400,
+        error.message,
+        "UserController.js, updateEmailById(), Users.findByIdAndUpdate()"
       );
       return response.status(500).json(error.message);
     }
