@@ -233,4 +233,25 @@ module.exports = {
       return response.status(500).json(error.message);
     }
   },
+
+  async addCoins(request, response) {
+    const { amount } = request.body;
+    const { id } = request.params;
+
+    try {
+      const user = await Users.findOne({ _id: id });
+      const newAmount = user.coins + amount;
+
+      const userDeleted = await Users.findByIdAndUpdate(
+        { _id: id },
+        { coins: newAmount }
+      );
+
+      responseLog("success", 201, "Coins updated.");
+      return response.json(userDeleted);
+    } catch (error) {
+      responseLog("error", 400, error.message, "UserController.js, addCoins()");
+      return response.status(500).json(error.message);
+    }
+  },
 };

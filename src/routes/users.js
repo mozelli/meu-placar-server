@@ -40,6 +40,11 @@ routes.put("/email-update/:id", (request, response) => {
   Users.updateEmailById(request, response);
 });
 
+routes.put("/add-coins/:id", (request, response) => {
+  requestLog("PUT", "users/update-coins/:id");
+  Users.addCoins(request, response);
+});
+
 // routes.use(authentication);
 // routes.get("/protected", (request, response) => {
 //   return response.json({ message: "Authorized.", user: request.userId });
