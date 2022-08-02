@@ -25,6 +25,11 @@ routes.get("/", (request, response) => {
   Users.getUsers(request, response);
 });
 
+routes.get("/:id", (request, response) => {
+  requestLog("GET", "users/:id");
+  Users.getUserById(request, response);
+});
+
 // routes.use(authentication);
 // routes.get("/protected", (request, response) => {
 //   return response.json({ message: "Authorized.", user: request.userId });

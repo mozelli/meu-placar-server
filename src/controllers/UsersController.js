@@ -175,4 +175,23 @@ module.exports = {
       return response.status(500).json(error.message);
     }
   },
+
+  async getUserById(request, response) {
+    const id = request.params.id;
+
+    try {
+      const user = await Users.findOne({ id });
+
+      responseLog("success", 200, "Users founded.");
+      return response.json(user);
+    } catch (error) {
+      responseLog(
+        "error",
+        400,
+        error.message,
+        "UserController.js, getUsersById(), Users.findOne()"
+      );
+      return response.status(500).json(error.message);
+    }
+  },
 };
