@@ -97,10 +97,10 @@ module.exports = {
         let li = $(this).html();
         let date = $("span.date", li).text();
         let teams = $("span.teams", li).text();
-        // let result = $("span .date", li).text()
-
+        let result = $("span .date", li).text();
         date = date.replace("•", "");
         const dateSanitized = date.split("\n");
+
         const dateWithoutBlankLine = dateSanitized.filter((line) => {
           if (line.trim().length === 0) {
             return false;
@@ -109,15 +109,14 @@ module.exports = {
         });
 
         const stadium = dateWithoutBlankLine[1];
-
         const breakDate = dateWithoutBlankLine[0].split(" ");
-        const data = breakDate[2].split("/");
+        const data = breakDate[0].split("/");
         const day = data[0];
         day < 10 ? `0${day}` : day;
         const month = data[1];
         month < 10 ? `0${month}` : month;
 
-        const breakHour = breakDate[3].split(":");
+        const breakHour = breakDate[1].split(":");
         const hour = breakHour[0];
         hour < 10 ? `0${hour}` : hour;
         const minutes = breakHour[1];

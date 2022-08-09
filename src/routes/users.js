@@ -5,13 +5,13 @@ const { requestLog } = require("../utils/logRegister");
 // CONTROLLERS
 const Users = require("../controllers/UsersController");
 
-routes.get("/authenticate", authentication, (request, response) => {
-  return response.json({ authorized: true });
-});
-
 routes.post("/sign-in", (request, response) => {
   requestLog("POST", "sign-in");
   Users.SignIn(request, response);
+});
+
+routes.get("/authenticate", authentication, (request, response) => {
+  return response.json({ authorized: true });
 });
 
 routes.post("/add-new-user", (request, response) => {

@@ -73,6 +73,7 @@ module.exports = {
 
     matches(request)
       .then((responseDataMatches) => {
+        console.log(responseDataMatches);
         let Matches;
 
         if (serie === "A") {
@@ -166,6 +167,7 @@ module.exports = {
     try {
       const matches = await Matches.find().sort("date");
       let result = [];
+      console.log(matches);
 
       matches.map((match) => {
         let catchDate = new Date(match.date);
