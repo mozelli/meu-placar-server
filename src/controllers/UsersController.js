@@ -56,6 +56,7 @@ module.exports = {
     const { name, lastname, email, password, birthday, permition } =
       request.body;
     const { day, month, year } = birthday;
+    console.log("entrou");
 
     try {
       if (await Users.findOne({ email })) {
